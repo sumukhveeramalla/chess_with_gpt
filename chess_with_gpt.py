@@ -312,3 +312,15 @@ st.markdown(moves_table_markdown(board, start_fen))
 
 with st.expander("Text board (unicode)"):
     st.text(unicode_board(board))
+# --- PGN download ---
+import chess.pgn, io
+pgn_game = chess.pgn.Game()
+pgn_game.setup(chess.Board(st.session_state.start_fen))
+node = pgn_game
+tmp = chess.Board(st.session_state.start_fen)
+for mv in board.move_stack:
+    node = node.add_variation(mv)
+    tmp.push(mv)
+buf = io.StringIO()
+print(pgn_game, file=buf)
+st.download_button("Download PGN", buf.getvalue(), file_name="game.pgn")
